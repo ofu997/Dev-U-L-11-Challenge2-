@@ -60,7 +60,7 @@ namespace DevUL11Challenge2_War
 				p.Cards.Add(card);
 				_deck.Remove(card);
 
-				_sb.Append("");
+				_sb.Append("<br/>");
 				_sb.Append(p.Name);
 				_sb.Append(" is dealt the ");
 				_sb.Append(card.Kind);
@@ -98,6 +98,12 @@ namespace DevUL11Challenge2_War
 		{
 			public string Name { get; set; }
 			public List<Card> Cards { get; set; }
+
+			// added in last 
+			public Player()
+			{
+				Cards = new List<Card>();
+			}
 		}
 
 		protected void Page_Load(object sender, EventArgs e)
@@ -115,7 +121,7 @@ namespace DevUL11Challenge2_War
 			}
 			*/
 			Game game = new Game("p1","p2");
-			game.Play();
+			resultLabel.Text= game.Play();
 		}
 	}
 }
