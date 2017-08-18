@@ -9,6 +9,7 @@ namespace DevUL11Challenge2_War
 {
 	public partial class WebForm2 : System.Web.UI.Page
 	{
+		// EDIT PLAYER, ADD BATTLE 
 		public class Card
 		{
 			public string Suit { get; set; }
@@ -38,7 +39,6 @@ namespace DevUL11Challenge2_War
 				}
 				return value;
 			}
-
 		}
 
 		public class Deck
@@ -49,13 +49,6 @@ namespace DevUL11Challenge2_War
 
 			public Deck()
 			{
-				/*
-				_deck = new List<Card>() {
-					new Card { Suit="Clubs", Kind="2"},
-					new Card { Suit ="Clubs", Kind="3"},
-				}
-				 */
-
 				_deck = new List<Card>();
 				_random = new Random();
 				_sb = new System.Text.StringBuilder();
@@ -72,6 +65,7 @@ namespace DevUL11Challenge2_War
 				}
 			}
 
+			// uses another player variable
 			public string Deal(Player player1, Player player2)
 			{
 				while (_deck.Count > 0)
@@ -82,7 +76,7 @@ namespace DevUL11Challenge2_War
 				}
 				return _sb.ToString();
 			}
-
+			// uses another player variable
 			private void dealCard(Player player)
 			{
 				Card card = _deck.ElementAt(_random.Next(_deck.Count));
@@ -95,7 +89,8 @@ namespace DevUL11Challenge2_War
 				_sb.Append(card.Kind);
 				_sb.Append(" of ");
 				_sb.Append(card.Suit);
-				_sb.Append(" ");
+				//
+				_sb.Append(" Round: ");
 				_sb.Append(player.Cards.Count);
 			}
 
@@ -103,48 +98,53 @@ namespace DevUL11Challenge2_War
 		// End of Deck class 
 		public class Game
 		{
-			private Player p1;
-			private Player p2;
-			private List<Card> _bounty;
+			private Player ourP1;
+			private Player ourP2;
+			// private List<Card> _bounty;
 
-			public Game(string p1name, string p2name)
+			public Game(string player1Name, string player2Name)
 			{
-				p1 = new Player()
-				{
-					Name = p1name
-				};
-				p2 = new Player()
-				{
-					Name = p2name
-				};
-				_bounty = new List<Card>();
+				ourP1 = new Player() { Name = player1Name };
+				ourP2 = new Player() { Name = player2Name };
+				// _bounty = new List<Card>();
 			}
+
 			public string Play()
 			{
 				Deck deck = new Deck();
-				string result=	deck.Deal(p1, p2);
+				string result = "<h3>dealing cards   ..</h3>";
+				result += deck.Deal(ourP1, ourP2);
+				result += "<h3>begin battle ...</h3>";
 
 				int round = 0;
-				while (p1.Cards.Count != 0 && p2.Cards.Count != 0)
+				while (ourP1.Cards.Count != 0 && ourP2.Cards.Count != 0)
 				{
-					//Card p1Card = p1.Cards.ElementAt(0);
-					//Card p2Card = p2.Cards.ElementAt(0);
-					Card p1Card = getCard(p1);
-					Card p2Card = getCard(p2);
-					//if ( p1Card.CardValue >  p2Card.CardValue)
-					//{}
-					performEvaluation(p1, p2, p1Card, p2Card);
+					Battle battle = new Battle();
+					result += battle.PerformBattle(ourP1, ourP2);
+
+					performEvaluation(ourP1, ourP2, player1Card, player2Card);
 
 					round++;
 					if (round > 20)
 						break;
-				}//determine
-				result+= determineWinner();
-				return result; 
-			}// end Game.Play
+				}
+				// Determine the winner
+				result += determineWinner();
+				return result;
+			}
 
-			//private List<Card> _bounty; 
+			private string determineWinner()
+			{
+				string result = "";
+				if (ourP1.Cards.Count > ourP2.Cards.Count)
+					result += "<br/><br/>Player 1 wins";
+				else
+					result += "<br/><br/>Player 2 wins";
 
+				result += "<br/><br/>Player 1: " + ourP1.Cards.Count + "<br/>Player2: " + ourP2.Cards.Count;
+				return result;
+			}
+			/*
 			private Card getCard(Player player)
 			{
 				Card card = player.Cards.ElementAt(0);
@@ -153,40 +153,27 @@ namespace DevUL11Challenge2_War
 				return card;
 			}
 
-			private void performEvaluation(Player p1, Player p2, Card card1, Card card2)
+			private void performEvaluation(Player player1, Player player2, Card card1, Card card2)
 			{
 				if (card1.CardValue() > card2.CardValue())
-					p1.Cards.AddRange(_bounty);
+					player1.Cards.AddRange(_bounty);
 				else
-				{
-					p2.Cards.AddRange(_bounty);
-				}
-
+					player2.Cards.AddRange(_bounty);
+				_bounty.Clear();
 			}
-
-			private string determineWinner()
-			{
-				string result = "";
-				if (p1.Cards.Count > p2.Cards.Count)
-					result += "<br/> p1 wins";
-				else
-					result += "<br/> p2 wins ";
-				result += "<br/>Player 1: " + p1.Cards.Count + "  Player 2: " + p2.Cards.Count;
-				return result;
-			}
-
-		}// End Game
+			*/
+		} // end GAME
 
 		public class Player
 		{
 			public string Name { get; set; }
 			public List<Card> Cards { get; set; }
 
-			// added in last 
 			public Player()
 			{
 				Cards = new List<Card>();
 			}
+
 		}
 
 		protected void Page_Load(object sender, EventArgs e)
@@ -209,5 +196,3 @@ namespace DevUL11Challenge2_War
 	}
 }
 
-
-// perform evaluation 
