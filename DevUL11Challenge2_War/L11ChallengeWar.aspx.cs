@@ -9,8 +9,107 @@ namespace DevUL11Challenge2_War
 {
 	public partial class WebForm2 : System.Web.UI.Page
 	{
-		// EDIT PLAYER, ADD BATTLE 
-		// testing
+		// ADD BATTLE
+
+		public class Battle
+		{
+			private List<Card> _bounty;
+			private System.Text.StringBuilder _sb;
+
+			public Battle()
+			{
+				_bounty = new List<Card>();
+				_sb = new System.Text.StringBuilder();
+			}
+
+			public string PerformBattle(Player player1, Player player2)
+			{
+				Card player1Card = getCard(player1);
+				Card player2Card = getCard(player2);
+
+				performEvaluation(player1, player2, player1Card, player2Card);
+				return _sb.ToString();
+			}
+
+
+			private Card getCard(Player player)
+			{
+				Card card = player.Cards.ElementAt(0);
+				player.Cards.Remove(card);
+				_bounty.Add(card);
+				return card;
+			}
+
+			private void performEvaluation(Player player1, Player player2, Card card1, Card card2)
+			{
+				displayBattleCards(card1, card2);
+				if (card1.CardValue() == card2.CardValue())
+					war(player1, player2);
+				if (card1.CardValue() > card2.CardValue())
+					awardWinner(player1);
+				else
+					awardWinner(player2);
+
+			}
+
+			private void awardWinner(Player player)
+			{
+				if (_bounty.Count == 0) return;
+				displayBountyCards();
+				player.Cards.AddRange(_bounty);
+				_bounty.Clear();
+
+				_sb.Append("<br/><strong>");
+				_sb.Append(player.Name);
+				_sb.Append(" wins!</strong><br/>");
+			}
+
+			private void war(Player player1, Player player2)
+			{
+				_sb.Append("<br/>************WAR***************<br/>");
+				getCard(player1);
+				Card warCard1 = getCard(player1);
+				getCard(player1);
+
+				getCard(player2);
+				Card warCard2 = getCard(player2);
+				getCard(player2);
+
+				performEvaluation(player1, player2, warCard1, warCard2);
+			}
+
+			private void displayBattleCards(Card card1, Card card2)
+			{
+				_sb.Append("<br/>Battle Cards: ");
+				_sb.Append(card1.Kind);
+				_sb.Append(" of ");
+				_sb.Append(card1.Suit);
+				_sb.Append(": worth ");
+				_sb.Append( card1.CardValue() );
+				_sb.Append(" versus ");
+				_sb.Append(card2.Kind);
+				_sb.Append(" of ");
+				_sb.Append(card2.Suit);
+				_sb.Append(": worth ");
+				_sb.Append(card2.CardValue());
+			}
+
+			private void displayBountyCards()
+			{
+				_sb.Append("<br/>Bounty ...");
+
+				foreach (var card in _bounty)
+				{
+					_sb.Append("<br/>&nbsp;&nbsp;&nbsp;&nbsp;");
+					_sb.Append(card.Kind);
+					_sb.Append(" of ");
+					_sb.Append(card.Suit);
+				}
+
+			}
+
+
+		}
 
 		public class Card
 		{
@@ -124,8 +223,6 @@ namespace DevUL11Challenge2_War
 					Battle battle = new Battle();
 					result += battle.PerformBattle(ourP1, ourP2);
 
-					performEvaluation(ourP1, ourP2, player1Card, player2Card);
-
 					round++;
 					if (round > 20)
 						break;
@@ -139,9 +236,9 @@ namespace DevUL11Challenge2_War
 			{
 				string result = "";
 				if (ourP1.Cards.Count > ourP2.Cards.Count)
-					result += "<br/><br/>Player 1 wins";
+					result += "<br/><span style='color:blue;font-weight:bolder;'>PLAYER 1 WINS</span>";
 				else
-					result += "<br/><br/>Player 2 wins";
+					result += "<br/><span style='color:blue;font-weight:bolder;'>PLAYER 2 WINS</span>";
 
 				result += "<br/><br/>Player 1: " + ourP1.Cards.Count + "<br/>Player2: " + ourP2.Cards.Count;
 				return result;
