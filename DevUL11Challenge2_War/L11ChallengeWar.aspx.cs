@@ -10,6 +10,8 @@ namespace DevUL11Challenge2_War
 	public partial class WebForm2 : System.Web.UI.Page
 	{
 		// EDIT PLAYER, ADD BATTLE 
+		// testing
+
 		public class Card
 		{
 			public string Suit { get; set; }
